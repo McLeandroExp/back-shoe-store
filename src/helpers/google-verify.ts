@@ -8,13 +8,14 @@ async function googleVerify(token = "") {
     //[CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]
   });
   const payload: TokenPayload | undefined = ticket.getPayload();
-  const { name, picture, email } = payload!;
-
-  return {
-    nombre: name,
-    img: picture,
-    correo: email,
-  };
+  if (payload) {
+    const { name, picture, email } = payload;
+    return {
+      nombre: name,
+      img: picture,
+      correo: email,
+    };
+  } else return undefined;
 }
 
 export { googleVerify };

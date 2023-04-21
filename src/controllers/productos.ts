@@ -1,10 +1,11 @@
-import { Response } from "express";
+import { Response, Request } from "express";
 import { CustomRequest } from "../interfaces/custom-request";
 import Producto from "../models/producto";
 import { IProducto } from "../interfaces";
+import Categoria from "../models/categoria";
 
 const obtenerProductos = async (req: CustomRequest, res: Response) => {
-  let { limite = 5, desde = 1 } = req.query;
+  let { limite = 10, desde = 1 } = req.query;
   limite = Number(limite);
   desde = Number(desde);
   const query = { estado: true };
@@ -13,7 +14,7 @@ const obtenerProductos = async (req: CustomRequest, res: Response) => {
     const [totalBDD, productos] = await Promise.all([
       await Producto.countDocuments(query),
       await Producto.find(query)
-        .populate("usuario", "nombre")
+        // .populate("usuario", "nombre")
         .populate("categoria", "nombre")
         .skip(desde)
         .limit(limite),
@@ -32,6 +33,49 @@ const obtenerProducto = async (req: CustomRequest, res: Response) => {
     .populate("categoria", "nombre");
 
   res.json({ ok: true, producto });
+};
+
+const obtenerProductosPorCategoria = async (req: Request, res: Response) => {
+  const arrCategoriasConProductos = await Categoria.aggregate([
+    {
+      $lookup: {
+        from: "productos",
+        localField: "_id",
+        foreignField: "categoria",
+        as: "productos",
+      },
+    },
+  ]);
+  res.json(arrCategoriasConProductos);
+};
+const obtenerProductosPorSexo = async (req: Request, res: Response) => {
+  const { sexo } = req.params;
+  try {
+    switch (sexo) {
+      case "hombre":
+        const productosHombres = await Producto.find({
+          sexo: { $in: ["hombre", "unisex"] },
+        }).populate("categoria", "nombre");
+        res.json(productosHombres);
+        break;
+      case "mujer":
+        const productosMujeres = await Producto.find({
+          sexo: { $in: ["mujer", "unisex"] },
+        });
+        res.json(productosMujeres);
+        break;
+      case "unisex":
+        const productosUnisex = await Producto.find({ sexo: "unisex" });
+        res.json(productosUnisex);
+        break;
+      default:
+        res.status(400).json({ msg: "Error en la peticion" });
+        break;
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ err: "Something went wrong" });
+  }
 };
 
 const crearProducto = async (req: CustomRequest, res: Response) => {
@@ -87,4 +131,6 @@ export {
   obtenerProducto,
   actualizarProducto,
   borrarProducto,
+  obtenerProductosPorCategoria,
+  obtenerProductosPorSexo,
 };

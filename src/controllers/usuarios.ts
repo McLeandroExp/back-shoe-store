@@ -20,14 +20,20 @@ const usuariosGet = async (req: Request, res: Response) => {
 };
 const usuariosPost = async (req: Request, res: Response) => {
   const { nombre, correo, password, rol } = req.body;
-  const usuario = new Usuario({ nombre, correo, password, rol });
+  try {
+    const usuario = new Usuario({ nombre, correo, password, rol });
 
-  //encriptar la contrasenia
-  const salt = bcrypt.genSaltSync();
-  usuario.password = bcrypt.hashSync(password, salt);
-  //guardar en db
-  await usuario.save();
-  res.status(201).json({ msg: "post api", usuario });
+    //encriptar la contrasenia
+    const salt = bcrypt.genSaltSync();
+    usuario.password = bcrypt.hashSync(password, salt);
+    //guardar en db
+    await usuario.save();
+    res.status(201).json({ msg: "post api usuario creado", usuario, ok: true });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ ok: false, msg: "post api usuario no creado", usuario: null });
+  }
 };
 const usuariosPut = async (req: Request, res: Response) => {
   const { id } = req.params;

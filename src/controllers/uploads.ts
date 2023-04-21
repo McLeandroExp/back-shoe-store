@@ -36,7 +36,9 @@ const actualizarImagenesProducto = async (req: Request, res: Response) => {
     }
     try {
       const { tempFilePath } = archivo;
-      const { secure_url } = await v2.uploader.upload(tempFilePath);
+      const { secure_url } = await v2.uploader.upload(tempFilePath, {
+        transformation: { width: 960, height: 960, size: 960 },
+      });
       producto.imgs.unshift(secure_url);
       await producto.save();
       res.json(producto);

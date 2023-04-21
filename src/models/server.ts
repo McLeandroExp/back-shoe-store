@@ -1,4 +1,5 @@
 import express, { Application } from "express";
+import morgan from "morgan";
 import cors from "cors";
 import { dbConnection } from "../database/config";
 import fileUpload from "express-fileupload";
@@ -42,6 +43,7 @@ class Server {
         createParentPath: true,
       })
     );
+    this.app.use(morgan("short"));
   }
   routes() {
     this.app.use("/api/auth", authRouter);

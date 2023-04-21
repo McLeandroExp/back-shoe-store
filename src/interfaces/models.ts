@@ -24,5 +24,8 @@ interface IProducto extends Document {
   descripcion?: string;
   imgs: string[];
   disponible: boolean;
+  sexo?: string;
+  nombre_empresa?: string;
+  descuento?: number;
 }
 export { IUsuario, ICategoria, IProducto };

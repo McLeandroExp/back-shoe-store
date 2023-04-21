@@ -6,6 +6,8 @@ import {
   crearProducto,
   obtenerProducto,
   obtenerProductos,
+  obtenerProductosPorCategoria,
+  obtenerProductosPorSexo,
 } from "../controllers";
 import { existeCategoriaPorId, existeProductoPorId } from "../helpers";
 import { esAdminRole, validarCampos, validarJWT } from "../middlewares";
@@ -14,6 +16,12 @@ const productosRouter = Router();
 
 //obtener todos los productos - publico
 productosRouter.get("/", obtenerProductos);
+productosRouter.get("/categorias", obtenerProductosPorCategoria);
+productosRouter.get(
+  "/sex/:sexo",
+  [check("sexo", "debe mandar un sexo valido").exists(), validarCampos],
+  obtenerProductosPorSexo
+);
 
 productosRouter.get(
   "/:id",

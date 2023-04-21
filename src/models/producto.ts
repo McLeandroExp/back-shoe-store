@@ -28,6 +28,7 @@ const ProductoSchema = new Schema({
   },
   descripcion: {
     type: String,
+    default: "",
   },
   imgs: [
     {
@@ -37,6 +38,19 @@ const ProductoSchema = new Schema({
   disponible: {
     type: Boolean,
     default: true,
+  },
+  sexo: {
+    type: String,
+    enum: ["hombre", "mujer", "unisex"],
+    default: "unisex",
+  },
+  nombre_empresa: {
+    type: String,
+    default: "sneaker company",
+  },
+  descuento: {
+    type: Number,
+    default: 0,
   },
 });
 ProductoSchema.methods.toJSON = function () {

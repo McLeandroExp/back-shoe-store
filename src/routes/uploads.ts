@@ -16,9 +16,6 @@ uploadRouter.put(
   [
     validarArchivoSubir,
     check("id", "El id debe ser  de mongo").isMongoId(),
-    check("coleccion").custom((c) =>
-      coleccionesPermitidas(c, ["usuarios", "productos"])
-    ),
     validarCampos,
   ],
   actualizarImagenUsuarioCloudinary
